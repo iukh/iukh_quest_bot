@@ -1055,7 +1055,7 @@ async def clear_debt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     """Запуск бота"""
     # Токен вашего бота
-    TOKEN = "8286027833:AAEjA4ajUXyNuOvhiR8Xsbm_9JuNORuuDHk"
+    TOKEN = ""
 
     # Создаем приложение
     application = Application.builder() \
