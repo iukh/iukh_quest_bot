@@ -1,15 +1,41 @@
 {
   "372495015": {
     "user_id": 372495015,
-    "current_question": 1,
-    "used_hints": {},
-    "showed_solutions": [],
-    "questions_without_hints": [],
-    "debt": {
-      "hugs": 0,
-      "kisses": 0,
-      "wishes": 0
+    "current_question": 11,
+    "used_hints": {
+      "1": [
+        1,
+        2
+      ],
+      "2": [
+        2,
+        1
+      ],
+      "10": [
+        2,
+        1
+      ]
     },
-    "start_time": "2025-12-06T04:40:24.278146"
+    "showed_solutions": [
+      1,
+      2,
+      10
+    ],
+    "questions_without_hints": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "debt": {
+      "hugs": 15,
+      "kisses": 30,
+      "wishes": 3
+    },
+    "start_time": "2025-12-08T06:01:07.759900",
+    "has_started_quest": true
   }
 }

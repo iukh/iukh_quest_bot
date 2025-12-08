@@ -15,6 +15,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # Структура вопроса
 @dataclass
 class Question:
@@ -26,32 +27,63 @@ class Question:
     description: str
     image_url: Optional[str] = None
 
+
+# Уникальные поздравления для каждого вопроса
+CONGRATULATIONS = {
+    1: "🎯 *Отлично!* Ты разгадал первую загадку! 💫\n\n💝 Круто, что тебе удалось решить мою первую загадку, надеюсь, что тебе понравилось и было интересно. В качестве бонуса за классное решение хочется подарить тебе небольшой подарок. Открой пакетик с номером 1. Пусть эти мелочи немного порадуют тебя 💕",
+    2: "🔐 *Великолепно!* Ты расшифровал JWT токен! Настоящий детектив в мире кодирования! 🕵️‍♂️\n\n💝 Супер! Время открыть мешочек с номером 2 💕",
+    3: "🧩 *Браво!* Анаграмма разгадана! Ты мастер головоломок! 🏆\n\n💝 Супер! Время открыть мешочек с номером 3 💕",
+    4: "🔢 *Потрясающе!* Математическая загадка решена! Твой ум блестящ! ✨\n\n💝 Супер! Время открыть мешочек с номером 4 💕",
+    5: "🎹 *Восхитительно!* Ты нашел ответ! Музыка всегда делает мир прекраснее! 🎶\n\n💝 Супер! Время открыть мешочек с номером 5 💕",
+    6: "☁️ *Замечательно!* Облачная загадка разгадана! Ты паришь выше облаков! 🌈\n\n💝 Супер! Время открыть мешочек с номером 6 💕",
+    7: "❤️ *Прекрасно!* Ты почувствовал загадку сердцем! Любовь - самая сильная магия! 💕\n\n💝 Супер! Время открыть мешочек с номером 7 💕",
+    8: "🔄 *Гениально!* Цифровая трансформация раскрыта! Ты видишь то, что скрыто! 👁️\n\n💝 Супер! Время открыть мешочек с номером 8 💕",
+    9: "🤔 *Умопомрачительно!* Логическая загадка решена! Твое мышление нестандартно! 🧠\n\n💝 Супер! Время открыть мешочек с номером 9 💕",
+    10: "🆔 *Блестяще!* Ты понял самую личную загадку! Имя - это наше первое сокровище! 💎\n\n💝 Супер! Время открыть мешочек с номером 10 💕"
+}
+
+# Уникальные ободряющие сообщения после показа решения
+ENCOURAGEMENTS = {
+    1: "💝 И пусть тебе не удалось решить загадку, всего скорее она просто некачественно составлена мной) Это точно не повод расстраиваться. В качестве бонуса за твое терпение и старание хочется подарить тебе небольшой подарок. Открой пакетик с номером 1. Пусть эти мелочи немного порадуют тебя 💕",
+    2: "💝 Не расстраивайся! Время открыть мешочек с номером 2 💕",
+    3: "💝 Не расстраивайся! Время открыть мешочек с номером 3 💕",
+    4: "💝 Не расстраивайся! Время открыть мешочек с номером 4 💕",
+    5: "💝 Не расстраивайся! Время открыть мешочек с номером 5 💕",
+    6: "💝 Не расстраивайся! Время открыть мешочек с номером 6 💕",
+    7: "💝 Не расстраивайся! Время открыть мешочек с номером 7 💕",
+    8: "💝 Не расстраивайся! Время открыть мешочек с номером 8 💕",
+    9: "💝 Не расстраивайся! Время открыть мешочек с номером 9 💕",
+    10: "💝 Не расстраивайся! Время открыть мешочек с номером 10 💕"
+}
+
+
 class UserDebt:
     """Класс для хранения долгов за подсказки"""
+
     def __init__(self):
         self.hugs = 0  # минуты обнимашек
         self.kisses = 0  # количество поцелуев
         self.wishes = 0  # количество желаний автора
-        
+
     def add_hugs(self, minutes: int = 5):
         """Добавить обнимашки"""
         self.hugs += minutes
-        
+
     def add_kisses(self, count: int = 10):
         """Добавить поцелуи"""
         self.kisses += count
-        
+
     def add_wish(self, count: int = 1):
         """Добавить желание автора"""
         self.wishes += count
-        
+
     def to_dict(self):
         return {
             'hugs': self.hugs,
             'kisses': self.kisses,
             'wishes': self.wishes
         }
-    
+
     @classmethod
     def from_dict(cls, data):
         debt = cls()
@@ -59,16 +91,17 @@ class UserDebt:
         debt.kisses = data.get('kisses', 0)
         debt.wishes = data.get('wishes', 0)
         return debt
-    
+
     def __str__(self):
         result = []
         if self.hugs > 0:
-            result.append(f"💖 Обнимашки: {self.hugs} минут")
+            result.append(f"🧸 Обнимашки: {self.hugs} минут")
         if self.kisses > 0:
             result.append(f"💋 Поцелуи: {self.kisses} штук")
         if self.wishes > 0:
-            result.append(f"🎁 Желания: {self.wishes} шт")
+            result.append(f"🪄 Желания: {self.wishes} шт")
         return "\n".join(result) if result else "🎉 Долгов нет!"
+
 
 class UserProgress:
     def __init__(self, user_id: int):
@@ -79,41 +112,42 @@ class UserProgress:
         self.questions_without_hints = []  # номера вопросов, пройденных без подсказок
         self.debt = UserDebt()  # Изначально долг равен 0
         self.start_time = datetime.now().isoformat()
-        
+        self.has_started_quest = False  # Флаг, начал ли пользователь квест
+
     def add_hint_used(self, question_id: int, hint_num: int):
         """Добавить использованную подсказку"""
         # Инициализируем список для вопроса, если его нет
         if question_id not in self.used_hints:
             self.used_hints[question_id] = []
-            
+
         if hint_num not in self.used_hints[question_id]:
             self.used_hints[question_id].append(hint_num)
-            
+
             # Добавляем "долг" за подсказку
             if hint_num == 1:
                 self.debt.add_hugs(5)
             elif hint_num == 2:
                 self.debt.add_kisses(10)
-    
+
     def add_solution_shown(self, question_id: int):
         """Добавить просмотр решения"""
         if question_id not in self.showed_solutions:
             self.showed_solutions.append(question_id)
             # Добавляем долг за просмотр решения
             self.debt.add_wish(1)
-    
+
     def mark_question_completed(self, question_id: int):
         """Отметить вопрос как завершенный и проверить, были ли подсказки"""
         used = self.used_hints.get(question_id, [])
         if not used:
             self.questions_without_hints.append(question_id)
-    
+
     def get_stats(self) -> Tuple[int, int]:
         """Возвращает статистику: (всего пройдено, без подсказок)"""
         total_completed = self.current_question - 1
         without_hints = len(self.questions_without_hints)
         return total_completed, without_hints
-        
+
     def to_dict(self):
         return {
             'user_id': self.user_id,
@@ -122,9 +156,10 @@ class UserProgress:
             'showed_solutions': self.showed_solutions,
             'questions_without_hints': self.questions_without_hints,
             'debt': self.debt.to_dict(),
-            'start_time': self.start_time
+            'start_time': self.start_time,
+            'has_started_quest': self.has_started_quest
         }
-    
+
     @classmethod
     def from_dict(cls, data):
         progress = cls(data['user_id'])
@@ -134,114 +169,112 @@ class UserProgress:
         progress.questions_without_hints = data.get('questions_without_hints', [])
         progress.debt = UserDebt.from_dict(data.get('debt', {}))
         progress.start_time = data.get('start_time', datetime.now().isoformat())
+        progress.has_started_quest = data.get('has_started_quest', False)
         return progress
+
 
 # Вопросы для квеста
 QUESTIONS = [
     Question(
         id=1,
-        description="Первая загадка",
-        text="Что падает с неба зимой, но не является снегом, если это светит?",
-        answer="снежинка",
-        hint1="Это бывает разной формы",
-        hint2="У каждой из них уникальный узор",
-        image_url="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ПЕРВАЯ ЗАГАДКА",
+        text="*Напиши ответ:* \n\n `nj vj;yj edbltnm c pfrhsnsvb ukfpfvb`",
+        answer="сон",
+        hint1="Здесь зашифрована ооочень простая загадка",
+        hint2="Ой, кажется я раскладку забыла поменять)",
     ),
     Question(
         id=2,
-        description="Вторая загадка",
-        text="Расшифруй ответ: \n eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF1ZXN0X3VzZXJfMTIzNCIsImVtYWlsIjoicXVlc3QuZW1haWxAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MTIzNDU2NzgsImlhdCI6MTcxMjM0MjA3OCwiYW5zd2VyIjoiY29uZ3JhdHVsYXRpb25zIiwicmFuZG9tX251bWJlciI6ODQ3Miwic2Vzc2lvbl9pZCI6InNlc3NfYWJjZDM0NWVmMTIzIn0.6jSy1IJ0q2n4GDwV2DgvQaJXkL3O9bHpQwM8zKtN7YxE",
+        description="ВТОРАЯ ЗАГАДКА",
+        text="*Расшифруй ответ:* \n\n eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF1ZXN0X3VzZXJfMTIzNCIsImVtYWlsIjoicXVlc3QuZW1haWxAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MTIzNDU2NzgsImlhdCI6MTcxMjM0MjA3OCwiYW5zd2VyIjoiY29uZ3JhdHVsYXRpb25сIiwicmFuZG9tX251bWJlciI6ODQ3Miwic2Vzc2lvbl9pZCI6InNlc3NfYWJjZDM0NWVmMTIzIn0.6jSy1IJ0q2n4GDwV2DgvQaJXkL3O9bHpQwM8zKtN7YxE",
         answer="congratulations",
         hint1="Ты ж программист =)",
-        hint2="Кажется это какой-то токен",
-        image_url="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        hint2="Кажется это какой-то токен и ответ не на русском)",
     ),
     Question(
         id=3,
-        description="Третья загадка",
-        text="А что спряталось тут? НГИОСЕКВ",
+        description="ТРЕТЬЯ ЗАГАДКА",
+        text="*А что спряталось тут?* \n\n НГИОСЕКВ",
         answer="снеговик",
         hint1="Наше 'любимое' задание)",
         hint2="Это анаграмма, ответ связан с зимой и снегом. Видели это на пути в кондитерскую)",
-        image_url="https://images.unsplash.com/photo-1533134486753-c833f0ed4866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     ),
     Question(
         id=4,
-        description="Четвертая загадка",
-        text="Я нечетное число, убери одну букву и я стану четным",
+        description="ЧЕТВЕРТАЯ ЗАГАДКА",
+        text="Разгадай загадку: \nЯ нечетное число. Убери одну букву и я стану четным!",
         answer="seven",
-        hint1="Ответ на английском",
-        hint2="Число от 0 до 10",
-        image_url="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        hint1="Ответ на английском!",
+        hint2="Убрать надо первую букву, а число от 1 до 10)",
     ),
     Question(
         id=5,
-        description="Пятая загадка",
-        text="Что имеет ключ, но не может открыть замок?",
-        answer="пианино",
-        hint1="Музыкальный инструмент",
-        hint2="На нем играют, нажимая клавиши",
-        image_url="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ПЯТАЯ ЗАГАДКА",
+        text="Расшифруй ребус =)",
+        answer="компьютер",
+        hint1="На второй картинке БМП",
+        hint2="На третье картинке ЮАР",
+        image_url="https://github.com/iukh/iukh_quest_bot/blob/main/images/computer.png?raw=true"
     ),
     Question(
         id=6,
-        description="Шестая загадка",
-        text="Что летает без крыльев и плачет без глаз?",
-        answer="облако",
-        hint1="Белое и пушистое на небе",
-        hint2="Из него идет дождь",
-        image_url="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ШЕСТАЯ ЗАГАДКА",
+        text="Расшифруй слово \nЧТ2ПН3СБ2ВС1ВС3ЧТ1ВТ2СР3ПН3ВТ1ЧТ2ВС1 \n\nКлюч: месяц нашей первой встречи =)",
+        answer="командировка",
+        hint1="Мы встретились в январе 2023 года) Шифр надо разбить на пары день недели и число. ",
+        hint2="А - ВС1, К - ЧТ2. Шифр заменяет каждую букву на день недели месяца , согласно порядковому номеру этой буквы в алфавите. Лучше открыть календарик =)",
     ),
     Question(
         id=7,
-        description="Седьмая загадка",
-        text="Что можно разбить, даже не прикасаясь к нему?",
-        answer="сердце",
-        hint1="Связано с чувствами",
-        hint2="Символ любви",
-        image_url="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="СЕДЬМАЯ ЗАГАДКА",
+        text="А что тут написано? =)",
+        answer="встреча",
+        hint1="Внешний вид букв искажен отрицательно",
+        hint2="Наложи ключ на букву и убери все псовпадающие линии",
+        image_url="https://github.com/iukh/iukh_quest_bot/blob/main/images/negative.png?raw=true"
     ),
     Question(
         id=8,
-        description="Восьмая загадка",
-        text="Что становится больше, если его перевернуть?",
-        answer="шесть",
-        hint1="Это цифра",
-        hint2="Превращается в другую цифру",
-        image_url="https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ВОСЬМАЯ ЗАГАДКА",
+        text="И снова шифр! \nНЁЕГЁЗПОПЛ \n\n Ключ: 1",
+        answer="медвежонок",
+        hint1="Цезарь - не салат, а шифр) Ключ - это сдвиг относительно алфавита",
+        hint2="Шифр заменяет кажду букву на другую букву, находящуюся справа от нее со смещением равным значению ключа. А -> Б; Б -> В",
+        image_url="https://github.com/iukh/iukh_quest_bot/blob/main/images/%D1%86%D0%B5%D0%B7%D0%B0%D1%80%D1%8C.jpg?raw=true"
     ),
     Question(
         id=9,
-        description="Девятая загадка",
-        text="Что можно держать в правой руке, но никогда в левой?",
-        answer="левый локоть",
-        hint1="Часть тела",
-        hint2="Связано с локтями",
-        image_url="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ДЕВЯТАЯ ЗАГАДКА",
+        text="Что зашифровано на картинке?)",
+        answer="ёжик",
+        hint1="Основное действие - вычитание",
+        hint2="Буква получается результатом вычитания координаты по оси X и Y. Например, 52-15 = 37 = В",
+        image_url="https://github.com/iukh/iukh_quest_bot/blob/main/images/%D0%B5%D0%B6%D0%B8%D0%BA.png?raw=true"
     ),
     Question(
         id=10,
-        description="Десятая загадка",
-        text="Что принадлежит тебе, но другие используют его чаще, чем ты?",
-        answer="имя",
-        hint1="Тебе дали его при рождении",
-        hint2="К тебе обращаются с помощью этого",
-        image_url="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+        description="ДЕСЯТАЯ ЗАГАДКА",
+        text="А тут простая правда)",
+        answer="скучаю и жду встречу",
+        hint1="Все и правда очень просто. Цифры - это порядок",
+        hint2="Да вроде все уже было подсказано) \nРасположи буквы в порядке возрастания цифр.",
+        image_url="https://github.com/iukh/iukh_quest_bot/blob/main/images/%D1%81%D0%BA%D1%83%D1%87%D0%B0%D1%8E.png?raw=true"
     )
 ]
+
 
 class QuestBot:
     def __init__(self):
         self.user_progress: Dict[int, UserProgress] = {}
         self.load_progress()
-        
+
     def save_progress(self):
         """Сохраняет прогресс всех пользователей в файл"""
-        data = {user_id: progress.to_dict() 
+        data = {user_id: progress.to_dict()
                 for user_id, progress in self.user_progress.items()}
         with open('progress.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-    
+
     def load_progress(self):
         """Загружает прогресс из файла"""
         if os.path.exists('progress.json'):
@@ -254,72 +287,92 @@ class QuestBot:
                 logger.info("Прогресс загружен из файла")
             except Exception as e:
                 logger.error(f"Ошибка загрузки прогресса: {e}")
-    
+
     def get_user_progress(self, user_id: int) -> UserProgress:
         """Получает или создает прогресс пользователя"""
         if user_id not in self.user_progress:
             self.user_progress[user_id] = UserProgress(user_id)
         return self.user_progress[user_id]
-    
+
     def get_current_question(self, user_id: int) -> Optional[Question]:
         """Получает текущий вопрос для пользователя"""
         progress = self.get_user_progress(user_id)
         if 1 <= progress.current_question <= len(QUESTIONS):
             return QUESTIONS[progress.current_question - 1]
         return None
-    
+
     def get_question_keyboard(self, user_id: int, question_id: int):
         """Создает клавиатуру с подсказками и решением для вопроса"""
         progress = self.get_user_progress(user_id)
         used_hints = progress.used_hints.get(question_id, [])
-        
+
         buttons = []
-        
+
         # Кнопки подсказок
         if 1 not in used_hints:
-            buttons.append([InlineKeyboardButton("💖 Подсказка 1 (+5 мин обнимашек)", callback_data=f"hint_{question_id}_1")])
+            buttons.append(
+                [InlineKeyboardButton("🧸 Подсказка 1 (+5 мин обнимашек)", callback_data=f"hint_{question_id}_1")])
         if 2 not in used_hints:
-            buttons.append([InlineKeyboardButton("💋 Подсказка 2 (+10 поцелуев)", callback_data=f"hint_{question_id}_2")])
-        
+            buttons.append(
+                [InlineKeyboardButton("💋 Подсказка 2 (+10 поцелуев)", callback_data=f"hint_{question_id}_2")])
+
         # Кнопка решения (появляется только после обеих подсказок)
         if len(used_hints) >= 2 and question_id not in progress.showed_solutions:
             buttons.append([InlineKeyboardButton("🔴 Решение (+1 желание)", callback_data=f"solution_{question_id}")])
-            
+
         return InlineKeyboardMarkup(buttons) if buttons else None
-    
+
     def get_question_text(self, user_id: int, question: Question) -> str:
         """Формирует текст вопроса со статистикой и использованными подсказками"""
         progress = self.get_user_progress(user_id)
         total_completed, without_hints = progress.get_stats()
         used_hints = progress.used_hints.get(question.id, [])
-        
+
         text = (
-            f"❓{question.description}❓\n\n"
             f"{question.text}\n\n"
+            f"---\n\n"
         )
-        
+
         # Показываем использованные подсказки
         if 1 in used_hints:
             text += f"💡 *Подсказка 1:* {question.hint1}\n"
         if 2 in used_hints:
             text += f"💡 *Подсказка 2:* {question.hint2}\n"
-        
+
         if used_hints:
             text += "\n"
-        
+
         text += (
-            f"📊 Прогресс: {total_completed}/{len(QUESTIONS)}\n"
-            f"✅ Без подсказок: {without_hints} вопросов\n"
+            f"*Прогресс:* \n 📈 {total_completed}/{len(QUESTIONS)}\n"
         )
-        
+
         debt_str = str(progress.debt)
         if debt_str != "🎉 Долгов нет!":
-            text += f"\n💝 Текущий долг:\n{debt_str}\n"
-        
+            text += f"\n *Текущий долг:*\n{debt_str}\n"
+
         return text
 
-async def send_message(update: Update, text: str, parse_mode: str = 'Markdown', reply_markup = None):
+
+async def send_message(update: Update, text: str, parse_mode: str = 'Markdown', reply_markup=None,
+                       image_url: Optional[str] = None):
     """Универсальная функция для отправки сообщений"""
+    if image_url:
+        try:
+            if update.message:
+                await update.message.reply_photo(photo=image_url, caption=text, parse_mode=parse_mode,
+                                                 reply_markup=reply_markup)
+            elif update.callback_query:
+                await update.callback_query.message.reply_photo(photo=image_url, caption=text, parse_mode=parse_mode,
+                                                                reply_markup=reply_markup)
+            elif update.effective_message:
+                await update.effective_message.reply_photo(photo=image_url, caption=text, parse_mode=parse_mode,
+                                                           reply_markup=reply_markup)
+            return
+        except Exception as e:
+            logger.error(f"Ошибка при отправке изображения: {e}")
+            # Продолжаем отправку текста без изображения
+
+    # Отправляем просто текст
     if update.message:
         return await update.message.reply_text(text, parse_mode=parse_mode, reply_markup=reply_markup)
     elif update.callback_query:
@@ -327,128 +380,331 @@ async def send_message(update: Update, text: str, parse_mode: str = 'Markdown', 
     elif update.effective_message:
         return await update.effective_message.reply_text(text, parse_mode=parse_mode, reply_markup=reply_markup)
 
+
+async def send_question(update: Update, user_id: int, bot: 'QuestBot'):
+    """Функция для отправки вопроса с изображением и клавиатурой"""
+    question = bot.get_current_question(user_id)
+    if not question:
+        await send_message(update, "🎉 Квест завершен! Нажми /restart чтобы начать заново.")
+        return
+
+    text = bot.get_question_text(user_id, question)
+    keyboard = bot.get_question_keyboard(user_id, question.id)
+
+    await send_message(
+        update,
+        text,
+        reply_markup=keyboard,
+        parse_mode='Markdown',
+        image_url=question.image_url
+    )
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     progress = bot.get_user_progress(user.id)
-    
-    welcome_text = (
-        f"🎄 Привет, {user.first_name}!\n\n"
-        f"✨ Добро пожаловать в зимний квест:\n"
-        f"🩵 *В ожидании встречи* 🩵\n\n"
-        f"Тебя ждут {len(QUESTIONS)} загадок!\n\n"
-        f"💖 *Особые правила:*\n"
-        f"• За первую подсказку: +5 минут обнимашек ёжика 🤗\n"
-        f"• За вторую подсказку: +10 поцелуев ёжика 🤗\n"
-        f"• За решение (после обеих подсказок): +1 исполнение желания ёжика 🤗\n\n"
-        f"🎅🏻 *Как играть:*\n"
-        f"1. Отвечай на загадки, отправляя ответ в чат\n"
-        f"2. Если сложно - используй подсказки (кнопки ниже)\n"
-        f"3. После обеих подсказок появится кнопка 'Решение'\n"
-        f"4. Все ответы вводятся маленькими буквами\n\n"
-    )
-    
-    # Всегда показываем welcome_text
-    await send_message(update, welcome_text, parse_mode='Markdown')
-    
+
     # Если квест уже завершен
     if progress.current_question > len(QUESTIONS):
         await send_message(update, "🎉 Ты уже завершил квест! Нажми /restart чтобы начать заново.")
         return
-    
-    # Показываем текущий вопрос
+
+    # Если пользователь еще не начинал квест
+    if not progress.has_started_quest:
+        welcome_text = (
+            f"Привет, *{user.first_name}*! 🧡\n\n"
+            f"Добро пожаловать в квест:\n"
+            f"🧡 *В ожидании тепла* 🧡\n\n"
+            f"Тебя ждут *{len(QUESTIONS)}* загадок!\n\n"
+            f"🎮 *Как играть:*\n"
+            f"1. Отвечай на загадки, отправляя ответ в чат\n"
+            f"2. Если сложно - используй подсказки (кнопки ниже)\n"
+            f"3. После обеих подсказок появится кнопка 'Решение'\n"
+            f"4. Все ответы вводятся маленькими буквами\n\n"
+            f"📖 *Особые правила:*\n"
+            f"Если вдруг возникнут трудности, то ты можешь взять подсказку\n"
+            f"• За первую подсказку: +5 минут *обнимашек* для ёжика 🧸\n"
+            f"• За вторую подсказку: +10 *поцелуев* ёжика 💋\n"
+            f"• За решение (после обеих подсказок): +1 исполнение *желания* ёжика 🪄\n\n"
+            f"• Готов принять вызов? =) 🪄\n\n"
+        )
+
+        # Создаем клавиатуру с кнопкой "Начать квест"
+        start_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🎮 Начать квест", callback_data="start_quest")]
+        ])
+
+        await send_message(update, welcome_text, parse_mode='Markdown', reply_markup=start_keyboard)
+        return
+
+    # Если пользователь уже начал квест
     question = bot.get_current_question(user.id)
-    
-    if question:
-        text = bot.get_question_text(user.id, question)
-        keyboard = bot.get_question_keyboard(user.id, question.id)
-        await send_message(update, text, reply_markup=keyboard, parse_mode='Markdown')
+
+    # Показываем сообщение с номером загадки
+    await send_message(
+        update,
+        f"❤️🧡💛️ *Загадка {question.id} из {len(QUESTIONS)}* 💛🧡❤️",
+        parse_mode='Markdown'
+    )
+
+    # Небольшая пауза для эффекта
+    await asyncio.sleep(0.5)
+
+    # Показываем саму загадку
+    await send_question(update, user.id, bot)
+
+
+async def handle_start_quest(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработчик нажатия кнопки 'Начать квест'"""
+    query = update.callback_query
+    await query.answer()
+
+    user = query.from_user
+    bot: QuestBot = context.bot_data['quest_bot']
+
+    progress = bot.get_user_progress(user.id)
+
+    # Устанавливаем флаг, что пользователь начал квест
+    progress.has_started_quest = True
+    bot.save_progress()
+
+    # ВМЕСТО РЕДАКТИРОВАНИЯ СООБЩЕНИЯ - ОТПРАВЛЯЕМ НОВОЕ
+    # Показываем сообщение с номером загадки как новое сообщение
+    await query.message.reply_text(
+        text=f"❤️🧡💛️ *Загадка 1 из {len(QUESTIONS)}* 💛🧡❤️",
+        parse_mode='Markdown'
+    )
+
+    # Небольшая пауза для эффекта
+    await asyncio.sleep(0.5)
+
+    # Показываем первую загадку
+    await send_question(update, user.id, bot)
+
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик текстовых сообщений (ответов на вопросы)"""
+    """Обработчик текстовых сообщений (ответов на вопросов)"""
     user = update.effective_user
     message_text = update.message.text.strip().lower()
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     progress = bot.get_user_progress(user.id)
+
+    # Проверяем, начал ли пользователь квест
+    if not progress.has_started_quest:
+        await update.message.reply_text(
+            "🎮 Сначала начни квест! Нажми /start чтобы начать.",
+            parse_mode='Markdown'
+        )
+        return
+
     question = bot.get_current_question(user.id)
-    
+
     if not question:
         await update.message.reply_text("🎉 Квест завершен! Нажми /restart чтобы начать заново.")
         return
-    
+
     # Проверка ответа
     if message_text == question.answer.lower():
         # Отмечаем вопрос как пройденный и проверяем подсказки
         progress.mark_question_completed(question.id)
-        progress.current_question += 1
-        
-        # Проверяем, есть ли еще вопросы
-        if progress.current_question <= len(QUESTIONS):
-            await show_next_question(update, context, user.id)
-        else:
-            # Квест завершен
-            await show_final_results(update, progress)
-        
-        bot.save_progress()
-    else:
-        await update.message.reply_text("❌ Неправильно. Попробуй еще раз! \n\n Или может стоит воспользоваться подсказкой? 😉 ")
 
-async def show_next_question(update, context, user_id):
-    """Показать следующий вопрос"""
+        # Получаем уникальное поздравление для этого вопроса
+        congratulation_text = CONGRATULATIONS.get(question.id, "🎉 *Правильно!* Отличная работа!")
+
+        # Добавляем статистику к поздравлению
+        total_completed, without_hints = progress.get_stats()
+        used_hints = len(progress.used_hints.get(question.id, []))
+
+        stats_part = f"\n\n📈 *Статистика этой загадки:*\n"
+        if used_hints == 0:
+            stats_part += f"✅ *Идеально!* Без подсказок!\n"
+        elif used_hints == 1:
+            stats_part += f"💡 Использована 1 подсказка\n"
+        else:
+            stats_part += f"💡 Использовано {used_hints} подсказки\n"
+
+        full_congratulation = f"{congratulation_text}{stats_part}"
+
+        # Для последнего вопроса показываем финальные результаты сразу
+        if question.id == len(QUESTIONS):
+            # Сохраняем прогресс
+            progress.current_question += 1
+            bot.save_progress()
+
+            # Показываем поздравление
+            await update.message.reply_text(full_congratulation, parse_mode='Markdown')
+
+            # Пауза перед финальными результатами
+            await asyncio.sleep(2)
+
+            # Показываем финальные результаты
+            await show_final_results(update, progress)
+            return
+
+        # Для не-последних вопросов показываем поздравление с кнопкой "Продолжить"
+        continue_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("➡️ Продолжить", callback_data=f"next_{question.id}")]
+        ])
+
+        await update.message.reply_text(
+            full_congratulation,
+            parse_mode='Markdown',
+            reply_markup=continue_keyboard
+        )
+
+    else:
+        await update.message.reply_text(
+            "❌ Неправильно. Попробуй еще раз! \n\n Или может стоит воспользоваться подсказкой? 😉 ")
+
+
+async def handle_continue(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработчик нажатия кнопки 'Продолжить' после правильного ответа"""
+    query = update.callback_query
+    await query.answer()
+
+    user = query.from_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
-    next_question = bot.get_current_question(user_id)
-    text = bot.get_question_text(user_id, next_question)
-    keyboard = bot.get_question_keyboard(user_id, next_question.id)
-    
-    await send_message(update, text, reply_markup=keyboard, parse_mode='Markdown')
+
+    # Извлекаем данные из callback_data
+    try:
+        action, question_id_str = query.data.split('_')
+        question_id = int(question_id_str)
+    except ValueError:
+        logger.error(f"Неверный формат callback_data: {query.data}")
+        return
+
+    progress = bot.get_user_progress(user.id)
+
+    # Проверяем, начал ли пользователь квест
+    if not progress.has_started_quest:
+        await query.edit_message_text(
+            text="🎮 Сначала начни квест! Нажми /start чтобы начать.",
+            reply_markup=None
+        )
+        return
+
+    # ВАЖНО: после правильного ответа current_question уже увеличен на 1
+    # Поэтому проверяем, что question_id соответствует предыдущему вопросу
+    # или что это следующий вопрос
+    expected_current = question_id + 1 if action == "next" else progress.current_question
+
+    # Если текущий вопрос не соответствует ожидаемому, все равно продолжаем
+    # (это может быть из-за задержек или других проблем)
+
+    # Увеличиваем номер текущего вопроса, если это нужно
+    if progress.current_question == question_id:
+        progress.current_question += 1
+    elif progress.current_question < question_id:
+        # Пользователь пытается перейти к вопросу, который еще не пройден
+        # В этом случае просто показываем текущий вопрос
+        await query.edit_message_text(
+            text="Продолжай текущую загадку!",
+            reply_markup=None
+        )
+        await send_question(update, user.id, bot)
+        return
+
+    bot.save_progress()
+
+    # Показываем следующий вопрос
+    next_question = bot.get_current_question(user.id)
+    if next_question:
+        # Отправляем новое сообщение с номером загадки
+        await query.message.reply_text(
+            text=f"❤️🧡💛️ *Загадка {next_question.id} из {len(QUESTIONS)}* 💛🧡❤️",
+            parse_mode='Markdown'
+        )
+
+        await send_question(update, user.id, bot)
+    else:
+        # Это последний вопрос завершен - показываем финальные результаты
+        await show_final_results_from_query(query, progress)
+
 
 async def show_final_results(update, progress):
     """Показать финальные результаты"""
     total_completed, without_hints = progress.get_stats()
-    
+
     response = (
-        f"🎄🎅🎉 *ПОЗДРАВЛЯЮ С ЗАВЕРШЕНИЕМ КВЕСТА!* 🎉🎅🎄\n\n"
-        f"Ты успешно прошел все {len(QUESTIONS)} новогодних загадок!\n\n"
-        f"📊 *Итоговая статистика:*\n"
-        f"• 🎯 Пройдено вопросов: {total_completed}\n"
+        f"🎊 *ПОЗДРАВЛЯЮ С ЗАВЕРШЕНИЕМ КВЕСТА!* 🎊\n\n"
+        f"Ты успешно прошел все {len(QUESTIONS)} загадок!\n\n"
+        f"📈 *Итоговая статистика:*\n"
+        f"• 🎯 Пройдено заданий: {total_completed}\n"
         f"• ✅ Без подсказок: {without_hints}\n"
         f"• 💡 С подсказками: {total_completed - without_hints}\n\n"
-        f"💝 *Твой новогодний долг:*\n{progress.debt}\n\n"
+        f"💝 *Твой долг:*\n{progress.debt}\n\n"
     )
-    
+
     if progress.debt.hugs > 0 or progress.debt.kisses > 0 or progress.debt.wishes > 0:
         response += (
-            f"❄️ *Новогодний бонус:*\n"
-            f"Все обещания нужно выполнить до боя курантов!\n"
-            f"Это сделает вашу встречу Нового года волшебной! 🎇\n\n"
+            f"🌟 *Напоминание:*\n"
+            f"Все обещания нужно выполнить при первой встрече!\n"
+            f"Это сделает вашу встречу волшебной! ✨\n\n"
         )
     else:
         response += (
             f"🏆 *ВАУ! Идеальный результат!*\n"
             f"Ты прошел весь квест без единой подсказки!\n"
-            f"Ты заслужил особый новогодний сюрприз! 🎁\n\n"
+            f"Ты заслужил особый сюрприз! 🎁\n\n"
         )
-    
+
     response += (
-        f"✨ *С наступающим Новым Годом!*\n"
-        f"Пусть он будет полон любви и тепла! ❤️\n\n"
+        f"🧡 *Спасибо за участие!*\n"
+        f"Пусть в твоей жизни всегда будет тепло и любовь! ❤️\n\n"
         f"Нажми /restart чтобы пройти квест еще раз!"
     )
-    
+
     await send_message(update, response, parse_mode='Markdown')
+
+
+async def show_final_results_from_query(query, progress):
+    """Показать финальные результаты из callback query"""
+    total_completed, without_hints = progress.get_stats()
+
+    response = (
+        f"🎊 *ПОЗДРАВЛЯЮ С ЗАВЕРШЕНИЕМ КВЕСТА!* 🎊\n\n"
+        f"Ты успешно прошел все {len(QUESTIONS)} загадок!\n\n"
+        f"📈 *Итоговая статистика:*\n"
+        f"• 🎯 Пройдено загадок: {total_completed}\n"
+        f"• ✅ Без подсказок: {without_hints}\n"
+        f"• 💡 С подсказками: {total_completed - without_hints}\n\n"
+        f"💝 *Твой долг:*\n{progress.debt}\n\n"
+    )
+
+    if progress.debt.hugs > 0 or progress.debt.kisses > 0 or progress.debt.wishes > 0:
+        response += (
+            f"🌟 *Напоминание:*\n"
+            f"Все обещания нужно выполнить при первой встрече!\n"
+            f"Это сделает вашу встречу волшебной! ✨\n\n"
+        )
+    else:
+        response += (
+            f"🏆 *ВАУ! Идеальный результат!*\n"
+            f"Ты прошел весь квест без единой подсказки!\n"
+            f"Ты заслужил особый сюрприз! 🎁\n\n"
+        )
+
+    response += (
+        f"🧡 *Спасибо за участие!*\n"
+        f"Пусть в твоей жизни всегда будет тепло и любовь! ❤️\n\n"
+        f"Нажми /restart чтобы пройти квест еще раз!"
+    )
+
+    await query.message.reply_text(response, parse_mode='Markdown')
+
 
 async def handle_hint(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик нажатий на подсказки"""
     query = update.callback_query
     await query.answer()
-    
+
     user = query.from_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     # Извлекаем данные из callback_data
     try:
         _, question_id_str, hint_num_str = query.data.split('_')
@@ -457,48 +713,65 @@ async def handle_hint(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except ValueError:
         logger.error(f"Неверный формат callback_data: {query.data}")
         return
-    
+
     progress = bot.get_user_progress(user.id)
     question = QUESTIONS[question_id - 1]
-    
-    # Проверяем, что пользователь на текущем вопросе
-    if progress.current_question != question_id:
+
+    # Проверяем, начал ли пользователь квест
+    if not progress.has_started_quest:
         await query.edit_message_text(
-            text="Этот вопрос уже пройден. Продолжай текущий вопрос!",
+            text="🎮 Сначала начни квест! Нажми /start чтобы начать.",
             reply_markup=None
         )
         return
-    
+
+    # Проверяем, что пользователь на текущем вопросе
+    if progress.current_question != question_id:
+        await query.edit_message_text(
+            text="Эта загадка уже пройдена. Продолжай текущую!",
+            reply_markup=None
+        )
+        return
+
     # Добавляем подсказку в использованные
     progress.add_hint_used(question_id, hint_num)
-    
+
     # Формируем новый текст сообщения
     text = bot.get_question_text(user.id, question)
-    
+
     # Обновляем клавиатуру
     keyboard = bot.get_question_keyboard(user.id, question_id)
-    
+
     # ОБНОВЛЯЕМ СООБЩЕНИЕ
     try:
-        await query.edit_message_text(
-            text=text,
+        await query.edit_message_caption(
+            caption=text,
             reply_markup=keyboard,
             parse_mode='Markdown'
         )
     except Exception as e:
-        logger.error(f"Ошибка при обновлении сообщения: {e}")
-        await query.message.reply_text(text, reply_markup=keyboard, parse_mode='Markdown')
-    
+        # Если сообщение без фото или другая ошибка
+        try:
+            await query.edit_message_text(
+                text=text,
+                reply_markup=keyboard,
+                parse_mode='Markdown'
+            )
+        except Exception as e2:
+            logger.error(f"Ошибка при обновлении сообщения: {e2}")
+            await query.message.reply_text(text, reply_markup=keyboard, parse_mode='Markdown')
+
     bot.save_progress()
+
 
 async def handle_solution(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик нажатий на кнопку 'Решение'"""
     query = update.callback_query
     await query.answer()
-    
+
     user = query.from_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     # Извлекаем данные из callback_data
     try:
         _, question_id_str = query.data.split('_')
@@ -506,218 +779,242 @@ async def handle_solution(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except ValueError:
         logger.error(f"Неверный формат callback_data: {query.data}")
         return
-    
+
     progress = bot.get_user_progress(user.id)
     question = QUESTIONS[question_id - 1]
-    
-    # Проверяем, что пользователь на текущем вопросе
-    if progress.current_question != question_id:
+
+    # Проверяем, начал ли пользователь квест
+    if not progress.has_started_quest:
         await query.edit_message_text(
-            text="Этот вопрос уже пройден. Продолжай текущий вопрос!",
+            text="🎮 Сначала начни квест! Нажми /start чтобы начать.",
             reply_markup=None
         )
         return
-    
+
+    # Проверяем, что пользователь на текущем вопросе
+    if progress.current_question != question_id:
+        await query.edit_message_text(
+            text="Эта загадка уже пройдена. Продолжай текущую)!",
+            reply_markup=None
+        )
+        return
+
     # Проверяем, что обе подсказки использованы
     used_hints = progress.used_hints.get(question_id, [])
     if len(used_hints) < 2:
         await query.answer("Сначала используй обе подсказки!", show_alert=True)
         return
-    
+
     # Добавляем просмотр решения
     progress.add_solution_shown(question_id)
-    
+
     # Отмечаем вопрос как пройденный (так как показано решение)
     progress.mark_question_completed(question_id)
+
+    # Получаем уникальное ободряющее сообщение для этого вопроса
+    encouragement_text = ENCOURAGEMENTS.get(question_id, "В любом случае, ты молодец!")
+
+    # Для последнего вопроса показываем финальные результаты
+    if question_id == len(QUESTIONS):
+        progress.current_question += 1
+
+        # Формируем сообщение с решением
+        text = bot.get_question_text(user.id, question)
+        text += f"\n*Решение:* \n🔴 {question.answer}"
+
+        # Создаем сообщение о наказании с уникальным ободряющим текстом
+        penalty_text = (
+            f"🪄 *Уи, теперь ты должен одно желание!*\n\n"
+            f"💌 *Что это значит:*\n"
+            f"Ёжик может загадать одно желание,\n"
+            f"которое тебе нужно будет выполнить! ❤️\n\n"
+            f"💔 *Но это совсем не повод расстраиваться!*\n"
+            f"{encouragement_text}"
+        )
+
+        # Обновляем сообщение с вопросом и решением
+        try:
+            await query.edit_message_caption(
+                caption=text,
+                reply_markup=None,
+                parse_mode='Markdown'
+            )
+        except:
+            await query.edit_message_text(
+                text=text,
+                reply_markup=None,
+                parse_mode='Markdown'
+            )
+
+        # Отправляем сообщение о наказании
+        await query.message.reply_text(penalty_text, parse_mode='Markdown')
+
+        # Пауза перед финальными результатами
+        await asyncio.sleep(2)
+
+        # Показываем финальные результаты
+        await show_final_results_from_query(query, progress)
+        bot.save_progress()
+        return
+
+    # Для не-последних вопросов показываем решение с кнопкой "Продолжить"
     progress.current_question += 1
-    
+
     # Формируем сообщение с решением
     text = bot.get_question_text(user.id, question)
     text += f"\n🔴 *Решение:* {question.answer}"
-    
-    # Создаем сообщение о наказании
+
+    # Создаем сообщение о наказании с уникальным ободряющим текстом
     penalty_text = (
-        "🎁 *Ты проиграл одно желание!*\n\n"
-        "💌 *Что это значит:*\n"
-        "Ёжик может загадать одно желание,\n"
-        "которое тебе нужно будет выполнить! ❤"
+        f"🪄 *Уи, теперь ты должен одно желание!*\n\n"
+        f"💌 *Что это значит:*\n"
+        f"Ёжик может загадать одно желание,\n"
+        f"которое тебе нужно будет выполнить! ❤️\n\n"
+        f"💔 *Это не повод расстраиваться!*\n"
+        f"{encouragement_text}\n\n"
+        f"Нажми 'Продолжить' для перехода к следующей загадке:"
     )
-    
+
+    continue_keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("➡️ Продолжить", callback_data=f"next_{question_id}")]
+    ])
+
     # Обновляем сообщение с вопросом и решением
-    await query.edit_message_text(
-        text=text,
-        reply_markup=None,
-        parse_mode='Markdown'
-    )
-    
-    # Отправляем сообщение о наказании
-    await query.message.reply_text(penalty_text, parse_mode='Markdown')
-    
-    # Проверяем, есть ли еще вопросы
-    if progress.current_question <= len(QUESTIONS):
-        # Пауза перед показом следующего вопроса
-        await asyncio.sleep(2)
-        
-        # Показываем следующий вопрос
-        next_question = bot.get_current_question(user.id)
-        if next_question:
-            next_text = bot.get_question_text(user.id, next_question)
-            next_keyboard = bot.get_question_keyboard(user.id, next_question.id)
-            await query.message.reply_text(next_text, reply_markup=next_keyboard, parse_mode='Markdown')
-    else:
-        # Квест завершен
-        await show_final_results_from_query(query, progress)
-    
+    try:
+        await query.edit_message_caption(
+            caption=text,
+            reply_markup=None,
+            parse_mode='Markdown'
+        )
+    except:
+        await query.edit_message_text(
+            text=text,
+            reply_markup=None,
+            parse_mode='Markdown'
+        )
+
+    # Отправляем сообщение о наказании с кнопкой продолжить
+    await query.message.reply_text(penalty_text, parse_mode='Markdown', reply_markup=continue_keyboard)
+
     bot.save_progress()
 
-async def show_final_results_from_query(query, progress):
-    """Показать финальные результаты из callback query"""
-    total_completed, without_hints = progress.get_stats()
-    
-    response = (
-        f"🎄🎅🎉 *ПОЗДРАВЛЯЮ С ЗАВЕРШЕНИЕМ КВЕСТА!* 🎉🎅🎄\n\n"
-        f"Ты успешно прошел все {len(QUESTIONS)} новогодних загадок!\n\n"
-        f"📊 *Итоговая статистика:*\n"
-        f"• 🎯 Пройдено вопросов: {total_completed}\n"
-        f"• ✅ Без подсказок: {without_hints}\n"
-        f"• 💡 С подсказками: {total_completed - without_hints}\n\n"
-        f"💝 *Твой новогодний долг:*\n{progress.debt}\n\n"
-    )
-    
-    if progress.debt.hugs > 0 or progress.debt.kisses > 0 or progress.debt.wishes > 0:
-        response += (
-            f"❄️ *Новогодний бонус:*\n"
-            f"Все обещания нужно выполнить до боя курантов!\n"
-            f"Это сделает вашу встречу Нового года волшебной! 🎇\n\n"
-        )
-    else:
-        response += (
-            f"🏆 *ВАУ! Идеальный результат!*\n"
-            f"Ты прошел весь квест без единой подсказки!\n"
-            f"Ты заслужил особый новогодний сюрприз! 🎁\n\n"
-        )
-    
-    response += (
-        f"✨ *С наступающим Новым Годом!*\n"
-        f"Пусть он будет полон любви и тепла! ❤️\n\n"
-        f"Нажми /restart чтобы пройти квест еще раз!"
-    )
-    
-    await query.message.reply_text(response, parse_mode='Markdown')
 
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Сброс прогресса и начало заново"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     # Сбрасываем прогресс
     bot.user_progress[user.id] = UserProgress(user.id)
     bot.save_progress()
-    
+
     response_text = (
-        "🔄 Прогресс сброшен! Все новогодние долги обнулены.\n"
-        "Нажми /start чтобы начать квест заново! 🎄"
+        "🔄 Прогресс сброшен! Все долги обнулены.\n"
+        "Нажми /start чтобы начать квест заново!"
     )
-    
+
     # Используем универсальную функцию отправки
     await send_message(update, response_text)
+
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Показать подробную статистику"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     progress = bot.get_user_progress(user.id)
     total_completed, without_hints = progress.get_stats()
-    
+
     if progress.current_question > len(QUESTIONS):
         stats_text = (
-            f"🎄 *Квест завершен!*\n\n"
-            f"📊 *Итоговая статистика:*\n"
-            f"• 🎯 Пройдено вопросов: {total_completed}/{len(QUESTIONS)}\n"
+            f"*Квест завершен!*\n\n"
+            f"📈 *Итоговая статистика:*\n"
+            f"• 🎯 Пройдено заданий: {total_completed}/{len(QUESTIONS)}\n"
             f"• ✅ Без подсказок: {without_hints}\n"
             f"• 💡 С подсказками: {total_completed - without_hints}\n"
             f"• 🔴 Показано решений: {len(progress.showed_solutions)}\n\n"
-            f"💝 *Новогодний долг:*\n{progress.debt}\n\n"
+            f"💝 *Твой долг тепла:*\n{progress.debt}\n\n"
         )
-        
+
         if progress.debt.hugs == 0 and progress.debt.kisses == 0 and progress.debt.wishes == 0:
             stats_text += "🏆 *Идеальный результат!* Ты прошел квест без долгов!\n\n"
-        
+
         stats_text += "Нажми /restart чтобы начать заново."
     else:
         question = bot.get_current_question(user.id)
         current_hints = len(progress.used_hints.get(progress.current_question, []))
-        
+
         stats_text = (
-            f"🎄 *Новогодний квест: В ожидании встречи*\n\n"
-            f"📊 *Статистика:*\n"
-            f"• 🏁 Прогресс: {total_completed}/{len(QUESTIONS)}\n"
-            f"• ✅ Без подсказок: {without_hints} вопросов\n"
+            f"*Квест: В ожидании тепла*\n\n"
+            f"📈 *Статистика:*\n"
+            f"• 📈 Прогресс: {total_completed}/{len(QUESTIONS)}\n"
+            f"• ✅ Без подсказок: {without_hints} загадок\n"
             f"• 💡 С подсказками: {total_completed - without_hints}\n"
             f"• 🔴 Показано решений: {len(progress.showed_solutions)}\n\n"
-            f"🎯 *Текущий вопрос:* {progress.current_question}\n"
+            f"🎯 *Текущий загадка:* {progress.current_question}\n"
             f"🔍 Использовано подсказок: {current_hints}/2\n\n"
-            f"💝 *Зимний долг:*\n{progress.debt}\n\n"
+            f"💝 *Твой долг:*\n{progress.debt}\n\n"
         )
-        
+
         if progress.debt.hugs > 0 or progress.debt.kisses > 0 or progress.debt.wishes > 0:
             stats_text += (
-                "❄️ *Напоминание:*\n"
-                "Каждая подсказка и решение - это обещание любви!\n"
-                "Выполни все до боя курантов! 🎇\n\n"
+                "🌟 *Напоминание:*\n"
+                "Каждая подсказка и решение - это обещание тепла!\n"
+                "Выполни все при первой встрече! ✨\n\n"
             )
-        
-        stats_text += f"❓ *Текущая загадка:* {question.text[:60]}..."
-    
+
+        stats_text += f" *Текущая загадка:* {question.text[:60]}..."
+
     await send_message(update, stats_text, parse_mode='Markdown')
+
 
 async def debt_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Показать информацию о долгах"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     progress = bot.get_user_progress(user.id)
     total_completed, without_hints = progress.get_stats()
-    
+
     debt_text = (
-        f"🎄 *Зимний долг тепла:*\n\n"
+        f"💝 *Твой долг тепла:*\n\n"
         f"{progress.debt}\n\n"
     )
-    
+
     if progress.debt.hugs > 0 or progress.debt.kisses > 0 or progress.debt.wishes > 0:
         debt_text += (
             f"📊 *Контекст:*\n"
-            f"• 🎯 Пройдено вопросов: {total_completed}\n"
+            f"• 🎯 Пройдено загадок: {total_completed}\n"
             f"• ✅ Без подсказок: {without_hints}\n"
             f"• 💡 С подсказками: {total_completed - without_hints}\n"
             f"• 🔴 Показано решений: {len(progress.showed_solutions)}\n\n"
-            f"❄️ *Важно:*\n"
+            f"🌟 *Важно:*\n"
             f"Все обещания нужно выполнить при первой встрече!💕\n"
         )
     else:
         debt_text += (
             f"🎉 *Ура! У тебя нет долгов!*\n"
             f"Ты молодец! Продолжай в том же духе!\n\n"
-            f"📊 Статистика: {without_hints}/{total_completed} без подсказок\n\n"
+            f"📈 Статистика: {without_hints}/{total_completed} без подсказок\n\n"
         )
-    
+
     await send_message(update, debt_text, parse_mode='Markdown')
+
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Помощь по командам"""
     help_text = (
-        "🎄 *Зимний квест: В ожидании встречи*\n\n"
+        "🧡 *Квест: В ожидании тепла*\n\n"
         "📋 *Доступные команды:*\n\n"
         "/start - Начать или продолжить квест\n"
         "/restart - Начать квест заново (обнуляет долги)\n"
         "/stats - Подробная статистика\n"
         "/debt - Показать текущий долг\n"
         "/help - Показать это сообщение\n\n"
-        "💖 *Особые правила квеста:*\n"
+        "📖 *Особые правила квеста:*\n"
         "1. Отвечай на загадки, отправляя ответы текстом\n"
         "2. Если нужна помощь - используй подсказки:\n"
-        "   • 💖 Первая подсказка: +5 минут обнимашек твоего ёжика\n"
+        "   • 🧸 Первая подсказка: +5 минут обнимашек для ёжика\n"
         "   • 💋 Вторая подсказка: +10 поцелуев для ёжика\n"
         "3. После обеих подсказок появляется кнопка:\n"
         "   • 🔴 Решение: +1 исполнение желания ёжика\n"
@@ -727,46 +1024,48 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• Ответы вводи строчными буквами\n"
         "• Без лишних символов и пробелов\n"
         "• Прогресс сохраняется автоматически\n\n"
-        "🩵 *Скучаю по тебе и жду встречи!* 🩵"
+        "🧡 *Скучаю по тебе и жду встречи!* 🧡"
     )
-    
+
     await send_message(update, help_text, parse_mode='Markdown')
+
 
 async def clear_debt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Команда для отметки выполнения долгов"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-    
+
     progress = bot.get_user_progress(user.id)
     old_debt = str(progress.debt)
-    
+
     # Обнуляем долги
     progress.debt = UserDebt()
     bot.save_progress()
-    
+
     response = (
         f"💝 *Долги выполнены!*\n\n"
         f"🎁 *Было:* {old_debt}\n"
         f"✨ *Стало:* {progress.debt}\n\n"
         f"Молодец! Все обещания выполнены! 💕\n"
     )
-    
+
     await send_message(update, response, parse_mode='Markdown')
+
 
 def main():
     """Запуск бота"""
     # Токен вашего бота
     TOKEN = "8286027833:AAEjA4ajUXyNuOvhiR8Xsbm_9JuNORuuDHk"
-    
+
     # Создаем приложение
     application = Application.builder() \
-                    .token(TOKEN) \
-                    .build()
-    
+        .token(TOKEN) \
+        .build()
+
     # Создаем экземпляр бота и сохраняем в bot_data
     quest_bot = QuestBot()
     application.bot_data['quest_bot'] = quest_bot
-    
+
     # Регистрируем обработчики
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("restart", restart))
@@ -774,19 +1073,26 @@ def main():
     application.add_handler(CommandHandler("debt", debt_info))
     application.add_handler(CommandHandler("clear_debt", clear_debt))
     application.add_handler(CommandHandler("help", help_command))
-    
+
+    # Обработчик кнопки "Начать квест"
+    application.add_handler(CallbackQueryHandler(handle_start_quest, pattern=r"^start_quest$"))
+
     # Обработчик подсказок
     application.add_handler(CallbackQueryHandler(handle_hint, pattern=r"^hint_"))
-    
+
     # Обработчик решений
     application.add_handler(CallbackQueryHandler(handle_solution, pattern=r"^solution_"))
-    
+
+    # Обработчик кнопки "Продолжить" (обрабатывает как next_ так и continue_ для обратной совместимости)
+    application.add_handler(CallbackQueryHandler(handle_continue, pattern=r"^(next|continue)_"))
+
     # Обработчик текстовых сообщений
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
+
     # Запуск бота
-    logger.info("🎄 Зимний квест-бот запущен...")
+    logger.info("🧡 Квест-бот 'В ожидании тепла' запущен...")
     application.run_polling()
+
 
 if __name__ == '__main__':
     main()
