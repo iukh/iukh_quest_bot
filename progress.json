@@ -1,7 +1,7 @@
 {
   "372495015": {
     "user_id": 372495015,
-    "current_question": 6,
+    "current_question": 9,
     "used_hints": {
       "1": [
         1,
@@ -13,7 +13,10 @@
       2,
       3,
       4,
-      5
+      5,
+      6,
+      7,
+      8
     ],
     "debt": {
       "hugs": 5,
@@ -150,6 +153,54 @@
           "details": "Правильный ответ на вопрос 5",
           "data": {
             "question_id": 5
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:38:13.198473+00:00",
+          "action": "USER_MESSAGE",
+          "details": "Пользователь отправил сообщение",
+          "data": {
+            "message": "согревают"
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:38:13.198739+00:00",
+          "action": "CORRECT_ANSWER",
+          "details": "Правильный ответ на вопрос 6",
+          "data": {
+            "question_id": 6
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:40:34.728711+00:00",
+          "action": "USER_MESSAGE",
+          "details": "Пользователь отправил сообщение",
+          "data": {
+            "message": "скучаю"
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:40:34.728945+00:00",
+          "action": "CORRECT_ANSWER",
+          "details": "Правильный ответ на вопрос 7",
+          "data": {
+            "question_id": 7
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:40:47.911798+00:00",
+          "action": "USER_MESSAGE",
+          "details": "Пользователь отправил сообщение",
+          "data": {
+            "message": "жду встречу"
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:40:47.911934+00:00",
+          "action": "CORRECT_ANSWER",
+          "details": "Правильный ответ на вопрос 8",
+          "data": {
+            "question_id": 8
           }
         }
       ]
