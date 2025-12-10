@@ -1,62 +1,70 @@
 {
   "372495015": {
     "user_id": 372495015,
-    "current_question": 11,
+    "current_question": 6,
     "used_hints": {
-      "2": [
-        2,
-        1
-      ],
-      "7": [
-        2,
-        1
+      "1": [
+        1,
+        2
       ]
     },
-    "showed_solutions": [
-      7
-    ],
+    "showed_solutions": [],
     "questions_without_hints": [
-      1,
+      2,
       3,
       4,
-      5,
-      6,
-      8,
-      9,
-      10
+      5
     ],
     "debt": {
-      "hugs": 10,
-      "kisses": 20,
-      "wishes": 1
+      "hugs": 5,
+      "kisses": 10,
+      "wishes": 0
     },
-    "start_time": "2025-12-08T23:44:27.815959",
+    "start_time": "2025-12-11T01:20:02.961872",
     "has_started_quest": true,
     "action_log": {
       "user_id": 372495015,
       "actions": [
         {
-          "timestamp": "2025-12-08T20:44:27.815972+00:00",
+          "timestamp": "2025-12-10T22:20:02.961884+00:00",
           "action": "INIT",
           "details": "Создан новый прогресс пользователя",
           "data": {}
         },
         {
-          "timestamp": "2025-12-08T20:44:32.492487+00:00",
+          "timestamp": "2025-12-10T22:20:16.182405+00:00",
           "action": "QUEST_STARTED",
           "details": "Пользователь начал квест",
           "data": {}
         },
         {
-          "timestamp": "2025-12-08T20:44:37.410103+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
+          "timestamp": "2025-12-10T22:21:41.077796+00:00",
+          "action": "HINT_USED",
+          "details": "Использована подсказка 1 для вопроса 1",
           "data": {
-            "message": "сон"
+            "question_id": 1,
+            "hint_num": 1
           }
         },
         {
-          "timestamp": "2025-12-08T20:44:37.410341+00:00",
+          "timestamp": "2025-12-10T22:21:43.355942+00:00",
+          "action": "HINT_USED",
+          "details": "Использована подсказка 2 для вопроса 1",
+          "data": {
+            "question_id": 1,
+            "hint_num": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:21:52.853624+00:00",
+          "action": "USER_MESSAGE",
+          "details": "Пользователь отправил сообщение",
+          "data": {
+            "message": "wonderful"
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:21:52.853884+00:00",
           "action": "CORRECT_ANSWER",
           "details": "Правильный ответ на вопрос 1",
           "data": {
@@ -64,165 +72,24 @@
           }
         },
         {
-          "timestamp": "2025-12-08T20:44:45.915643+00:00",
+          "timestamp": "2025-12-10T22:22:37.194798+00:00",
           "action": "USER_MESSAGE",
           "details": "Пользователь отправил сообщение",
           "data": {
-            "message": "congratuldations"
+            "message": "медвежоно"
           }
         },
         {
-          "timestamp": "2025-12-08T20:44:45.915777+00:00",
+          "timestamp": "2025-12-10T22:22:37.194960+00:00",
           "action": "WRONG_ANSWER",
           "details": "Неправильный ответ на вопрос 2",
           "data": {
             "question_id": 2,
-            "user_answer": "congratuldations"
+            "user_answer": "медвежоно"
           }
         },
         {
-          "timestamp": "2025-12-08T20:44:47.409811+00:00",
-          "action": "HINT_USED",
-          "details": "Использована подсказка 2 для вопроса 2",
-          "data": {
-            "question_id": 2,
-            "hint_num": 2
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:44:53.568761+00:00",
-          "action": "HINT_USED",
-          "details": "Использована подсказка 1 для вопроса 2",
-          "data": {
-            "question_id": 2,
-            "hint_num": 1
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:08.324244+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "congratulations"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:08.324783+00:00",
-          "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 2",
-          "data": {
-            "question_id": 2
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:17.654911+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "снеговик"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:17.655066+00:00",
-          "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 3",
-          "data": {
-            "question_id": 3
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:23.224887+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "seven"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:23.226042+00:00",
-          "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 4",
-          "data": {
-            "question_id": 4
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:31.378201+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "компьютер"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:31.378465+00:00",
-          "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 5",
-          "data": {
-            "question_id": 5
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:39.571519+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "командиврока"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:39.571740+00:00",
-          "action": "WRONG_ANSWER",
-          "details": "Неправильный ответ на вопрос 6",
-          "data": {
-            "question_id": 6,
-            "user_answer": "командиврока"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:43.258739+00:00",
-          "action": "USER_MESSAGE",
-          "details": "Пользователь отправил сообщение",
-          "data": {
-            "message": "командировка"
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:43.259000+00:00",
-          "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 6",
-          "data": {
-            "question_id": 6
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:47.251366+00:00",
-          "action": "HINT_USED",
-          "details": "Использована подсказка 2 для вопроса 7",
-          "data": {
-            "question_id": 7,
-            "hint_num": 2
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:48.684652+00:00",
-          "action": "HINT_USED",
-          "details": "Использована подсказка 1 для вопроса 7",
-          "data": {
-            "question_id": 7,
-            "hint_num": 1
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:50.117533+00:00",
-          "action": "SOLUTION_SHOWN",
-          "details": "Показано решение вопроса 7",
-          "data": {
-            "question_id": 7
-          }
-        },
-        {
-          "timestamp": "2025-12-08T20:45:57.902794+00:00",
+          "timestamp": "2025-12-10T22:22:40.969977+00:00",
           "action": "USER_MESSAGE",
           "details": "Пользователь отправил сообщение",
           "data": {
@@ -230,57 +97,59 @@
           }
         },
         {
-          "timestamp": "2025-12-08T20:45:57.903137+00:00",
+          "timestamp": "2025-12-10T22:22:40.970153+00:00",
           "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 8",
+          "details": "Правильный ответ на вопрос 2",
           "data": {
-            "question_id": 8
+            "question_id": 2
           }
         },
         {
-          "timestamp": "2025-12-08T20:46:08.135470+00:00",
+          "timestamp": "2025-12-10T22:23:45.779062+00:00",
           "action": "USER_MESSAGE",
           "details": "Пользователь отправил сообщение",
           "data": {
-            "message": "ёжик"
+            "message": "наши"
           }
         },
         {
-          "timestamp": "2025-12-08T20:46:08.135939+00:00",
+          "timestamp": "2025-12-10T22:23:45.779189+00:00",
           "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 9",
+          "details": "Правильный ответ на вопрос 3",
           "data": {
-            "question_id": 9
+            "question_id": 3
           }
         },
         {
-          "timestamp": "2025-12-08T20:46:21.861651+00:00",
+          "timestamp": "2025-12-10T22:23:54.110781+00:00",
           "action": "USER_MESSAGE",
           "details": "Пользователь отправил сообщение",
           "data": {
-            "message": "скучаю и жду встречу"
+            "message": "теплые"
           }
         },
         {
-          "timestamp": "2025-12-08T20:46:21.861794+00:00",
+          "timestamp": "2025-12-10T22:23:54.110949+00:00",
           "action": "CORRECT_ANSWER",
-          "details": "Правильный ответ на вопрос 10",
+          "details": "Правильный ответ на вопрос 4",
           "data": {
-            "question_id": 10
+            "question_id": 4
           }
         },
         {
-          "timestamp": "2025-12-08T20:46:21.861958+00:00",
-          "action": "QUEST_COMPLETED",
-          "details": "Пользователь завершил квест",
+          "timestamp": "2025-12-10T22:24:02.953545+00:00",
+          "action": "USER_MESSAGE",
+          "details": "Пользователь отправил сообщение",
           "data": {
-            "total_completed": 10,
-            "without_hints": 8,
-            "debt": {
-              "hugs": 10,
-              "kisses": 20,
-              "wishes": 1
-            }
+            "message": "воспоминания"
+          }
+        },
+        {
+          "timestamp": "2025-12-10T22:24:02.953924+00:00",
+          "action": "CORRECT_ANSWER",
+          "details": "Правильный ответ на вопрос 5",
+          "data": {
+            "question_id": 5
           }
         }
       ]
