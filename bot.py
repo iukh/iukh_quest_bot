@@ -2,36 +2,19 @@ import logging
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple, List
+from typing import Dict, Optional, Tuple
 import json
 import os
 from dotenv import load_dotenv
-from datetime import datetime, timezone
+from datetime import datetime
 import asyncio
 
-# Настройка основного логирования
+# Настройка логирования
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
-
-# Настройка логирования действий пользователей
-user_actions_logger = logging.getLogger('user_actions')
-user_actions_logger.setLevel(logging.INFO)
-
-# Создаем обработчик для записи в файл
-file_handler = logging.FileHandler('user_actions.log', encoding='utf-8')
-file_handler.setLevel(logging.INFO)
-
-# Формат для логов действий пользователей
-action_formatter = logging.Formatter('%(asctime)s - USER:%(user_id)d - ACTION:%(action)s - DETAILS:%(details)s')
-file_handler.setFormatter(action_formatter)
-
-# Добавляем обработчик к логгеру
-user_actions_logger.addHandler(file_handler)
-# Отключаем передачу сообщений родительскому логгеру
-user_actions_logger.propagate = False
 
 
 # Структура вопроса
@@ -71,7 +54,7 @@ ENCOURAGEMENTS = {
     7: "💝 Не расстраивайся! Время открыть мешочек с номером 7 💕",
     8: "💝 Не расстраивайся! Время открыть мешочек с номером 8 💕",
     9: "💝 Не расстраивайся! Время открыть мешочек с номером 9 💕",
-    10: "💝 Не расстраивайса! Время открыть мешочек с номером 10 💕"
+    10: "💝 Не расстраивайся! Время открыть мешочек с номером 10 💕"
 }
 
 
@@ -121,50 +104,6 @@ class UserDebt:
         return "\n".join(result) if result else "🎉 Долгов нет!"
 
 
-class UserActionLog:
-    """Класс для логирования действий пользователя"""
-
-    def __init__(self, user_id: int):
-        self.user_id = user_id
-        self.actions: List[Dict] = []
-
-    def log_action(self, action: str, details: str, data: Optional[Dict] = None):
-        """Записать действие в лог"""
-        action_record = {
-            'timestamp': datetime.now(timezone.utc).isoformat(),
-            'action': action,
-            'details': details,
-            'data': data or {}
-        }
-        self.actions.append(action_record)
-
-        # Также записываем в файл через логгер
-        user_actions_logger.info(
-            '',
-            extra={
-                'user_id': self.user_id,
-                'action': action,
-                'details': details
-            }
-        )
-
-    def get_recent_actions(self, limit: int = 10) -> List[Dict]:
-        """Получить последние действия"""
-        return self.actions[-limit:] if self.actions else []
-
-    def to_dict(self):
-        return {
-            'user_id': self.user_id,
-            'actions': self.actions
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        log = cls(data['user_id'])
-        log.actions = data.get('actions', [])
-        return log
-
-
 class UserProgress:
     def __init__(self, user_id: int):
         self.user_id = user_id
@@ -175,67 +114,6 @@ class UserProgress:
         self.debt = UserDebt()  # Изначально долг равен 0
         self.start_time = datetime.now().isoformat()
         self.has_started_quest = False  # Флаг, начал ли пользователь квест
-        self.action_log = UserActionLog(user_id)  # Лог действий пользователя
-
-        # Логируем инициализацию прогресса
-        self.action_log.log_action('INIT', 'Создан новый прогресс пользователя')
-
-    def log_user_message(self, message: str):
-        """Записать сообщение пользователя в лог"""
-        self.action_log.log_action(
-            'USER_MESSAGE',
-            f'Пользователь отправил сообщение',
-            {'message': message[:200]}  # Ограничиваем длину сообщения
-        )
-
-    def log_correct_answer(self, question_id: int):
-        """Записать правильный ответ"""
-        self.action_log.log_action(
-            'CORRECT_ANSWER',
-            f'Правильный ответ на вопрос {question_id}',
-            {'question_id': question_id}
-        )
-
-    def log_wrong_answer(self, question_id: int, user_answer: str):
-        """Записать неправильный ответ"""
-        self.action_log.log_action(
-            'WRONG_ANSWER',
-            f'Неправильный ответ на вопрос {question_id}',
-            {'question_id': question_id, 'user_answer': user_answer[:100]}
-        )
-
-    def log_hint_used(self, question_id: int, hint_num: int):
-        """Записать использование подсказки"""
-        self.action_log.log_action(
-            'HINT_USED',
-            f'Использована подсказка {hint_num} для вопроса {question_id}',
-            {'question_id': question_id, 'hint_num': hint_num}
-        )
-
-    def log_solution_shown(self, question_id: int):
-        """Записать показ решения"""
-        self.action_log.log_action(
-            'SOLUTION_SHOWN',
-            f'Показано решение вопроса {question_id}',
-            {'question_id': question_id}
-        )
-
-    def log_quest_started(self):
-        """Записать начало квеста"""
-        self.action_log.log_action('QUEST_STARTED', 'Пользователь начал квест')
-
-    def log_quest_completed(self):
-        """Записать завершение квеста"""
-        total_completed, without_hints = self.get_stats()
-        self.action_log.log_action(
-            'QUEST_COMPLETED',
-            'Пользователь завершил квест',
-            {
-                'total_completed': total_completed,
-                'without_hints': without_hints,
-                'debt': self.debt.to_dict()
-            }
-        )
 
     def add_hint_used(self, question_id: int, hint_num: int):
         """Добавить использованную подсказку"""
@@ -252,17 +130,12 @@ class UserProgress:
             elif hint_num == 2:
                 self.debt.add_kisses(10)
 
-            # Логируем использование подсказки
-            self.log_hint_used(question_id, hint_num)
-
     def add_solution_shown(self, question_id: int):
         """Добавить просмотр решения"""
         if question_id not in self.showed_solutions:
             self.showed_solutions.append(question_id)
             # Добавляем долг за просмотр решения
             self.debt.add_wish(1)
-            # Логируем показ решения
-            self.log_solution_shown(question_id)
 
     def mark_question_completed(self, question_id: int):
         """Отметить вопрос как завершенный и проверить, были ли подсказки"""
@@ -285,8 +158,7 @@ class UserProgress:
             'questions_without_hints': self.questions_without_hints,
             'debt': self.debt.to_dict(),
             'start_time': self.start_time,
-            'has_started_quest': self.has_started_quest,
-            'action_log': self.action_log.to_dict()
+            'has_started_quest': self.has_started_quest
         }
 
     @classmethod
@@ -299,8 +171,6 @@ class UserProgress:
         progress.debt = UserDebt.from_dict(data.get('debt', {}))
         progress.start_time = data.get('start_time', datetime.now().isoformat())
         progress.has_started_quest = data.get('has_started_quest', False)
-        progress.action_log = UserActionLog.from_dict(
-            data.get('action_log', {'user_id': data['user_id'], 'actions': []}))
         return progress
 
 
@@ -317,7 +187,7 @@ QUESTIONS = [
     Question(
         id=2,
         description="ВТОРАЯ ЗАГАДКА",
-        text="*Расшифруй ответ:* \n\n eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF1ZXN0X3VzZXJfMTIzNCIsImVtYWlsIjoicXVlc3QuZW1haWxAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MTIzNDU2NzgsImlhdCI6MTcxMjM0MjA3OCwiYW5zd2VyIjoiY29uZ3JhdHVsYXRpb25сIiwicmFuZG9tX251bWIiOj4zNzIsInNlc3Npb25faWQiOiJzZXNzX2FiY2QzNDVlZjEyMyJ9.6jSy1IJ0q2n4GDwV2DgvQaJXkL3O9bHpQwM8zKtN7YxE",
+        text="*Расшифруй ответ:* \n\n eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF1ZXN0X3VzZXJfMTIzNCIsImVtYWlsIjoicXVlc3QuZW1haWxAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MTIzNDU2NzgsImlhdCI6MTcxMjM0MjA3OCwiYW5zd2VyIjoiY29uZ3JhdHVsYXRpb25сIiwicmFuZG9tX251bWJlciI6ODQ3Miwic2Vzc2lvbl9pZCI6InNlc3NfYWJjZDM0NWVmMTIzIn0.6jSy1IJ0q2n4GDwV2DgvQaJXkL3O9bHpQwM8zKtN7YxE",
         answer="congratulations",
         hint1="Ты ж программист =)",
         hint2="Кажется это какой-то токен и ответ не на русском)",
@@ -398,65 +268,6 @@ class QuestBot:
     def __init__(self):
         self.user_progress: Dict[int, UserProgress] = {}
         self.load_progress()
-        self.admin_user_id = 372495015  # ID пользователя для отправки результатов
-
-    def escape_markdown(self, text: str) -> str:
-        """Экранирует специальные символы Markdown"""
-        escape_chars = r'_*[]()~`>#+-=|{}.!'
-        for char in escape_chars:
-            text = text.replace(char, f'\\{char}')
-        return text
-
-    async def send_results_to_admin(self, user_progress: UserProgress, context: ContextTypes.DEFAULT_TYPE):
-        """Отправляет результаты прохождения квеста администратору"""
-        try:
-            total_completed, without_hints = user_progress.get_stats()
-
-            # Экранируем текст долга
-            debt_str = self.escape_markdown(str(user_progress.debt))
-
-            # Формируем отчет с Markdown форматированием
-            report = (
-                f"📊 *РЕЗУЛЬТАТЫ ПРОХОЖДЕНИЯ КВЕСТА*\n\n"
-                f"👤 *Пользователь:* `{user_progress.user_id}`\n"
-                f"📅 *Дата начала:* `{user_progress.start_time[:19]}`\n"
-                f"🎯 *Завершено:* `{total_completed}`/`{len(QUESTIONS)}`\n"
-                f"✅ *Без подсказок:* `{without_hints}`\n"
-                f"💡 *С подсказками:* `{total_completed - without_hints}`\n"
-                f"🔴 *Решений показано:* `{len(user_progress.showed_solutions)}`\n\n"
-                f"💝 *Долг:*\n`{debt_str}`"
-            )
-
-            # Отправляем отчет администратору
-            await context.bot.send_message(
-                chat_id=self.admin_user_id,
-                text=report,
-                parse_mode='MarkdownV2'
-            )
-
-            logger.info(f"Отправлены результаты пользователя {user_progress.user_id} администратору {self.admin_user_id}")
-
-        except Exception as e:
-            logger.error(f"Ошибка при отправке результатов администратору: {e}")
-            # Пробуем отправить без форматирования
-            try:
-                simple_report = (
-                    f"РЕЗУЛЬТАТЫ ПРОХОЖДЕНИЯ КВЕСТА\n\n"
-                    f"Пользователь: {user_progress.user_id}\n"
-                    f"Дата начала: {user_progress.start_time[:19]}\n"
-                    f"Завершено: {total_completed}/{len(QUESTIONS)}\n"
-                    f"Без подсказок: {without_hints}\n"
-                    f"С подсказками: {total_completed - without_hints}\n"
-                    f"Решений показано: {len(user_progress.showed_solutions)}\n\n"
-                    f"Долг: {str(user_progress.debt)}"
-                )
-
-                await context.bot.send_message(
-                    chat_id=self.admin_user_id,
-                    text=simple_report
-                )
-            except Exception as e2:
-                logger.error(f"Ошибка при отправке простого отчета: {e2}")
 
     def save_progress(self):
         """Сохраняет прогресс всех пользователей в файл"""
@@ -659,7 +470,6 @@ async def handle_start_quest(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     # Устанавливаем флаг, что пользователь начал квест
     progress.has_started_quest = True
-    progress.log_quest_started()
     bot.save_progress()
 
     # ВМЕСТО РЕДАКТИРОВАНИЯ СООБЩЕНИЯ - ОТПРАВЛЯЕМ НОВОЕ
@@ -684,9 +494,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     progress = bot.get_user_progress(user.id)
 
-    # Логируем сообщение пользователя
-    progress.log_user_message(message_text)
-
     # Проверяем, начал ли пользователь квест
     if not progress.has_started_quest:
         await update.message.reply_text(
@@ -703,9 +510,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Проверка ответа
     if message_text == question.answer.lower():
-        # Логируем правильный ответ
-        progress.log_correct_answer(question.id)
-
         # Отмечаем вопрос как пройденный и проверяем подсказки
         progress.mark_question_completed(question.id)
 
@@ -730,7 +534,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if question.id == len(QUESTIONS):
             # Сохраняем прогресс
             progress.current_question += 1
-            progress.log_quest_completed()
             bot.save_progress()
 
             # Показываем поздравление
@@ -740,7 +543,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await asyncio.sleep(2)
 
             # Показываем финальные результаты
-            await show_final_results(update, progress, bot, context)
+            await show_final_results(update, progress)
             return
 
         # Для не-последних вопросов показываем поздравление с кнопкой "Продолжить"
@@ -755,9 +558,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     else:
-        # Логируем неправильный ответ
-        progress.log_wrong_answer(question.id, message_text)
-
         await update.message.reply_text(
             "❌ Неправильно. Попробуй еще раз! \n\n Или может стоит воспользоваться подсказкой? 😉 ")
 
@@ -823,11 +623,10 @@ async def handle_continue(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_question(update, user.id, bot)
     else:
         # Это последний вопрос завершен - показываем финальные результаты
-        progress.log_quest_completed()
-        await show_final_results_from_query(query, progress, bot, context)
+        await show_final_results_from_query(query, progress)
 
 
-async def show_final_results(update, progress, bot, context):
+async def show_final_results(update, progress):
     """Показать финальные результаты"""
     total_completed, without_hints = progress.get_stats()
 
@@ -862,11 +661,8 @@ async def show_final_results(update, progress, bot, context):
 
     await send_message(update, response, parse_mode='Markdown')
 
-    # Отправляем результаты администратору
-    await bot.send_results_to_admin(progress, context)
 
-
-async def show_final_results_from_query(query, progress, bot, context):
+async def show_final_results_from_query(query, progress):
     """Показать финальные результаты из callback query"""
     total_completed, without_hints = progress.get_stats()
 
@@ -900,9 +696,6 @@ async def show_final_results_from_query(query, progress, bot, context):
     )
 
     await query.message.reply_text(response, parse_mode='Markdown')
-
-    # Отправляем результаты администратору
-    await bot.send_results_to_admin(progress, context)
 
 
 async def handle_hint(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1025,7 +818,6 @@ async def handle_solution(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Для последнего вопроса показываем финальные результаты
     if question_id == len(QUESTIONS):
         progress.current_question += 1
-        progress.log_quest_completed()
 
         # Формируем сообщение с решением
         text = bot.get_question_text(user.id, question)
@@ -1062,7 +854,7 @@ async def handle_solution(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await asyncio.sleep(2)
 
         # Показываем финальные результаты
-        await show_final_results_from_query(query, progress, bot, context)
+        await show_final_results_from_query(query, progress)
         bot.save_progress()
         return
 
@@ -1112,17 +904,6 @@ async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Сброс прогресса и начало заново"""
     user = update.effective_user
     bot: QuestBot = context.bot_data['quest_bot']
-
-    # Логируем сброс прогресса
-    old_progress = bot.get_user_progress(user.id)
-    user_actions_logger.info(
-        'RESTART',
-        extra={
-            'user_id': user.id,
-            'action': 'RESTART',
-            'details': f'Сброс прогресса. Старый прогресс: {old_progress.current_question} вопрос'
-        }
-    )
 
     # Сбрасываем прогресс
     bot.user_progress[user.id] = UserProgress(user.id)
@@ -1258,16 +1039,6 @@ async def clear_debt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     progress = bot.get_user_progress(user.id)
     old_debt = str(progress.debt)
 
-    # Логируем очистку долга
-    user_actions_logger.info(
-        'CLEAR_DEBT',
-        extra={
-            'user_id': user.id,
-            'action': 'CLEAR_DEBT',
-            'details': f'Очистка долга. Было: {old_debt}'
-        }
-    )
-
     # Обнуляем долги
     progress.debt = UserDebt()
     bot.save_progress()
@@ -1280,85 +1051,6 @@ async def clear_debt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await send_message(update, response, parse_mode='Markdown')
-
-
-async def get_logs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Команда для получения логов (только для администратора)"""
-    user = update.effective_user
-
-    # Проверяем, является ли пользователь администратором
-    if user.id != 372495015:
-        await update.message.reply_text("❌ У вас нет доступа к этой команде.")
-        return
-
-    try:
-        # Читаем последние 20 строк из лог-файла
-        with open('user_actions.log', 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-            last_lines = lines[-20:] if len(lines) > 20 else lines
-
-        logs_text = "📋 *Последние 20 действий из лога:*\n\n"
-        for line in last_lines:
-            logs_text += f"`{line.strip()}`\n"
-
-        await update.message.reply_text(logs_text, parse_mode='Markdown')
-
-    except FileNotFoundError:
-        await update.message.reply_text("📭 Лог-файл не найден.")
-    except Exception as e:
-        await update.message.reply_text(f"❌ Ошибка при чтении логов: {e}")
-
-
-async def get_user_logs(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Получить логи конкретного пользователя (только для администратора)"""
-    user = update.effective_user
-
-    # Проверяем, является ли пользователь администратором
-    if user.id != 372495015:
-        await update.message.reply_text("❌ У вас нет доступа к этой команде.")
-        return
-
-    # Проверяем, указан ли ID пользователя
-    if not context.args:
-        await update.message.reply_text("❌ Укажите ID пользователя: /user_logs <user_id>")
-        return
-
-    try:
-        user_id = int(context.args[0])
-        bot: QuestBot = context.bot_data['quest_bot']
-
-        if user_id in bot.user_progress:
-            progress = bot.user_progress[user_id]
-            recent_actions = progress.action_log.get_recent_actions(15)
-
-            if recent_actions:
-                logs_text = f"📋 *Последние 15 действий пользователя {user_id}:*\n\n"
-                for action in recent_actions:
-                    timestamp = action['timestamp'][:19].replace('T', ' ')
-                    logs_text += f"⏰ *{timestamp}*\n"
-                    logs_text += f"🔹 *Действие:* {action['action']}\n"
-                    logs_text += f"📝 *Детали:* {action['details']}\n"
-                    if action.get('data'):
-                        logs_text += f"📊 *Данные:* {action['data']}\n"
-                    logs_text += "━━━━━━━━━━━━━━━━━━━━\n"
-
-                # Разбиваем на части, если сообщение слишком длинное
-                if len(logs_text) > 4000:
-                    parts = [logs_text[i:i + 4000] for i in range(0, len(logs_text), 4000)]
-                    for part in parts:
-                        await update.message.reply_text(part, parse_mode='Markdown')
-                        await asyncio.sleep(0.5)
-                else:
-                    await update.message.reply_text(logs_text, parse_mode='Markdown')
-            else:
-                await update.message.reply_text(f"📭 У пользователя {user_id} нет записей в логе.")
-        else:
-            await update.message.reply_text(f"❌ Пользователь {user_id} не найден.")
-
-    except ValueError:
-        await update.message.reply_text("❌ Неверный формат ID пользователя.")
-    except Exception as e:
-        await update.message.reply_text(f"❌ Ошибка: {e}")
 
 
 def main():
@@ -1384,10 +1076,6 @@ def main():
     application.add_handler(CommandHandler("clear_debt", clear_debt))
     application.add_handler(CommandHandler("help", help_command))
 
-    # Команды для администратора
-    application.add_handler(CommandHandler("logs", get_logs))
-    application.add_handler(CommandHandler("user_logs", get_user_logs))
-
     # Обработчик кнопки "Начать квест"
     application.add_handler(CallbackQueryHandler(handle_start_quest, pattern=r"^start_quest$"))
 
@@ -1405,8 +1093,6 @@ def main():
 
     # Запуск бота
     logger.info("🧡 Квест-бот 'В ожидании тепла' запущен...")
-    logger.info(f"📊 Логи действий будут сохраняться в user_actions.log")
-    logger.info(f"📨 Результаты будут отправляться пользователю {quest_bot.admin_user_id}")
     application.run_polling()
 
 
